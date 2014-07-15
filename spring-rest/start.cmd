@@ -1,0 +1,1 @@
+java -jar target/spring-rest-0.0.1-SNAPSHOT.jar
