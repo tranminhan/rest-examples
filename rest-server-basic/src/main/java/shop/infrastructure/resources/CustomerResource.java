@@ -40,7 +40,7 @@ import shop.domain.model.Customer;
 
 @Path("/customers")
 public class CustomerResource {
-    static Logger                  logger     = LoggerFactory.getLogger(CustomerResource.class);
+    static Logger                               logger     = LoggerFactory.getLogger(CustomerResource.class);
 
     private static final Map<Integer, Customer> customerDb = new HashMap<Integer, Customer>();
     private static final AtomicInteger          idCounter  = new AtomicInteger();
@@ -77,6 +77,32 @@ public class CustomerResource {
     @Produces("application/xml")
     public StreamingOutput getCustomer(@PathParam("id") int id) {
         final Customer customer = customerDb.get(id);
+        if (customer == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        return new StreamingOutput() {
+            public void write(OutputStream output) throws IOException, WebApplicationException {
+                outputCustomer(output, customer);
+            }
+        };
+    }
+
+    @GET
+    @Path("{firstname}-{lastname}")
+    public StreamingOutput getCustomerWithFirstNameAndLastName(
+            @PathParam("firstname") String firstName,
+            @PathParam("lastname") String lastName) {
+        Customer found = null;
+        for (Customer customer : customerDb.values()) {
+            if (customer.getLastName().equalsIgnoreCase(lastName)
+                    && customer.getFirstName().equalsIgnoreCase(firstName)) {
+                found = customer;
+                break;
+            }
+        }
+
+        final Customer customer = found != null ? found : null;
         if (customer == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }

@@ -84,6 +84,18 @@ public class CustomerResourceTest {
         logger.info("resourceAsString after update: " + resourceAsString);
     }
 
+    @Test
+    public void shouldFindWithFirstNameAndLastName() {
+        Client client = ClientBuilder.newClient();
+        String location = "http://localhost:8080/rest-server/shopping/customers/" + "Peter-Pan";
+
+        Response response = client.target(location).request().get();
+        response.bufferEntity();
+        String responseAsString = response.readEntity(String.class);
+        logger.info("responseAsString: " + responseAsString);
+        assertEquals(200, response.getStatus());
+    }
+
     @Ignore
     @Test
     public void shouldUpdateCustomerPartiallyWithPATCH() {
