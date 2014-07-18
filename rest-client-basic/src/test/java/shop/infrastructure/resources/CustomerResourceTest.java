@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CustomerResourceTest {
+    private static final String CUSTOMERS_BASE_RESOURCE = "http://localhost:8080/rest-server/shopping/customers";
     Logger logger = LoggerFactory.getLogger(CustomerResourceTest.class);
 
     @Test
@@ -31,7 +32,7 @@ public class CustomerResourceTest {
                 + "</customer>";
 
         // CREATE
-        Response response = client.target("http://localhost:8080/rest-server/shopping/customers")
+        Response response = client.target(CUSTOMERS_BASE_RESOURCE)
                 .request()
                 .post(Entity.xml(xml));
 
@@ -87,13 +88,16 @@ public class CustomerResourceTest {
     @Test
     public void shouldFindWithFirstNameAndLastName() {
         Client client = ClientBuilder.newClient();
-        String location = "http://localhost:8080/rest-server/shopping/customers/" + "Peter-Pan";
+        String location = CUSTOMERS_BASE_RESOURCE + "/Peter-Pan";
 
         Response response = client.target(location).request().get();
         response.bufferEntity();
         String responseAsString = response.readEntity(String.class);
         logger.info("responseAsString: " + responseAsString);
         assertEquals(200, response.getStatus());
+        
+        response = client.target(CUSTOMERS_BASE_RESOURCE + "/Unknown-Unknown").request().get();
+        assertEquals(404, response.getStatus());
     }
 
     @Ignore
