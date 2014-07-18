@@ -34,13 +34,14 @@ public class CustomerResourceTest {
                 .request()
                 .post(Entity.xml(xml));
 
+        logger.info("uri: " + response);
         if (response.getStatus() != 201) {
             fail("Failed to create resource");
         }
 
         String location = response.getLocation().toString();
-        logger.info("uri: " + location); 
-        response.close(); 
+        logger.info("uri: " + location);
+        response.close();
 
         // GET
         String resourceAsString = client.target(location).request().get(String.class);
@@ -57,7 +58,26 @@ public class CustomerResourceTest {
                 + "<country>VN</country>"
                 + "</customer>";
         client.target(location).request().put(Entity.xml(xmlUpdate));
+        // GET AGAIN
+        resourceAsString = client.target(location).request().get(String.class);
+        logger.info("resourceAsString after update: " + resourceAsString);
 
+    }
+
+    @Test
+    public void shouldUpdateCustomerPartially() {
+        Client client = ClientBuilder.newClient();
+        String location = "http://localhost:8080/rest-server/shopping/customers/0";
+
+        // GET
+        String resourceAsString = client.target(location).request().get(String.class);
+        logger.info("resourceAsString: " + resourceAsString);
+
+        // PATCH
+        String xmlPatch = "<customer>"
+                + "<city>Ha Long</city>"
+                + "</customer>";
+        client.target(location + "/edit").request().method("PUT", Entity.xml(xmlPatch));
         // GET AGAIN
         resourceAsString = client.target(location).request().get(String.class);
         logger.info("resourceAsString after update: " + resourceAsString);
