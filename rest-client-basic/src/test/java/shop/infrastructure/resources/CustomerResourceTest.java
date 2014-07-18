@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class CustomerResourceTest {
     private static final String CUSTOMERS_BASE_RESOURCE = "http://localhost:8080/rest-server/shopping/customers";
-    Logger logger = LoggerFactory.getLogger(CustomerResourceTest.class);
+    Logger                      logger                  = LoggerFactory.getLogger(CustomerResourceTest.class);
 
     @Test
     public void shouldCreateCustomer() {
@@ -95,9 +95,22 @@ public class CustomerResourceTest {
         String responseAsString = response.readEntity(String.class);
         logger.info("responseAsString: " + responseAsString);
         assertEquals(200, response.getStatus());
-        
+
         response = client.target(CUSTOMERS_BASE_RESOURCE + "/Unknown-Unknown").request().get();
         assertEquals(404, response.getStatus());
+    }
+
+    @Test
+    public void shouldGetCustomersWithPaging() {
+        Client client = ClientBuilder.newClient();
+
+        Response response = client.target(CUSTOMERS_BASE_RESOURCE + "?start=0&size=3").request().get();
+        logger.info("customers: " + response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+        
+        response = client.target(CUSTOMERS_BASE_RESOURCE + "?start=0").request().get();
+        logger.info("customers: " + response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
     }
 
     @Ignore

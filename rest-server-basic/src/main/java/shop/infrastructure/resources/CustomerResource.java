@@ -6,17 +6,21 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -70,6 +74,38 @@ public class CustomerResource {
         logger.info("Customer created: " + ReflectionToStringBuilder.toString(customer));
 
         return Response.created(URI.create("/" + customer.getId())).build();
+    }
+
+    @GET
+    @Produces("application/xml")
+    public StreamingOutput getCustomers(
+            @QueryParam("start") final int start,
+            @QueryParam("size") @DefaultValue("2") final int size) {
+
+        logger.info("getCustomes with start=" + start + ", size=" + size);
+
+        return new StreamingOutput() {
+
+            public void write(OutputStream output) throws IOException, WebApplicationException {
+                PrintStream writer = new PrintStream(output);
+                writer.println("<customers>");
+                List<Customer> list = new ArrayList<Customer>(customerDb.values());
+                for (int i = start; i < list.size() && i < (start + size); i++) {
+                    final Customer customer = list.get(i);
+                    writer.println("<customer id=\"" + customer.getId() + "\">");
+                    writer.println("   <first-name>" + customer.getFirstName() + "</first-name>");
+                    writer.println("   <last-name>" + customer.getLastName() + "</last-name>");
+                    writer.println("   <street>" + customer.getStreet() + "</street>");
+                    writer.println("   <city>" + customer.getCity() + "</city>");
+                    writer.println("   <state>" + customer.getState() + "</state>");
+                    writer.println("   <zip>" + customer.getZip() + "</zip>");
+                    writer.println("   <country>" + customer.getCountry() + "</country>");
+                    writer.println("</customer>");
+                }
+
+                writer.println("</customers>");
+            }
+        };
     }
 
     @GET
