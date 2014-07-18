@@ -12,6 +12,7 @@ public class ShoppingApplication extends Application {
     public Set<Object> getSingletons() {
         Set<Object> singletons = new HashSet<Object>();
         singletons.add(new CustomerResource());
+        singletons.add(new CustomerResourceAsHtml()); 
         return singletons;
     }
 }

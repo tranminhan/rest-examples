@@ -48,8 +48,8 @@ import shop.domain.model.Customer;
 public class CustomerResource {
     static Logger                               logger     = LoggerFactory.getLogger(CustomerResource.class);
 
-    private static final Map<Integer, Customer> customerDb = new HashMap<Integer, Customer>();
-    private static final AtomicInteger          idCounter  = new AtomicInteger();
+    static final Map<Integer, Customer> customerDb = new HashMap<Integer, Customer>();
+    static final AtomicInteger          idCounter  = new AtomicInteger();
 
     public CustomerResource()
     {
