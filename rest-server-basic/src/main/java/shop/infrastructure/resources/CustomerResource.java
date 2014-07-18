@@ -42,8 +42,24 @@ import shop.domain.model.Customer;
 public class CustomerResource {
     static Logger                  logger     = LoggerFactory.getLogger(CustomerResource.class);
 
-    private Map<Integer, Customer> customerDb = new HashMap<Integer, Customer>();
-    private AtomicInteger          idCounter  = new AtomicInteger();
+    private static final Map<Integer, Customer> customerDb = new HashMap<Integer, Customer>();
+    private static final AtomicInteger          idCounter  = new AtomicInteger();
+
+    public CustomerResource()
+    {
+        Customer customer = new Customer();
+        customer.setId(idCounter.getAndIncrement());
+        customer.setFirstName("Peter");
+        customer.setLastName("Pan");
+        customer.setStreet("Maze");
+        customer.setCity("Unknown");
+        customer.setState("Unknown");
+        customer.setZip("Unknown");
+        customer.setCountry("Unknown");
+
+        logger.info("customer: " + ReflectionToStringBuilder.toString(customer));
+        customerDb.put(customer.getId(), customer);
+    }
 
     @POST
     @Consumes("application/xml")
@@ -94,6 +110,13 @@ public class CustomerResource {
         currentCustomer.setCountry(customerToUpdate.getCountry());
 
         logger.info("Customer after updated: " + ReflectionToStringBuilder.toString(currentCustomer));
+    }
+
+    @PUT
+    @Path("{id}/edit")
+    @Consumes("application/xml")
+    public void updatePartialCustomerWithPut(@PathParam("id") int id, InputStream is) {
+        updatePartialCustomer(id, is);
     }
 
     @PATCH
