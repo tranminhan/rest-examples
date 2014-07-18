@@ -8,6 +8,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
 import org.antran.ws.client.ClientToServlet;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.omg.CORBA.RepositoryIdHelper;
 import org.slf4j.Logger;
@@ -78,6 +79,26 @@ public class CustomerResourceTest {
                 + "<city>Ha Long</city>"
                 + "</customer>";
         client.target(location + "/edit").request().method("PUT", Entity.xml(xmlPatch));
+        // GET AGAIN
+        resourceAsString = client.target(location).request().get(String.class);
+        logger.info("resourceAsString after update: " + resourceAsString);
+    }
+
+    @Ignore
+    @Test
+    public void shouldUpdateCustomerPartiallyWithPATCH() {
+        Client client = ClientBuilder.newClient();
+        String location = "http://localhost:8080/rest-server/shopping/customers/0";
+
+        // GET
+        String resourceAsString = client.target(location).request().get(String.class);
+        logger.info("resourceAsString: " + resourceAsString);
+
+        // PATCH
+        String xmlPatch = "<customer>"
+                + "<city>Ha Long</city>"
+                + "</customer>";
+        client.target(location).request().method("PATCH", Entity.xml(xmlPatch));
         // GET AGAIN
         resourceAsString = client.target(location).request().get(String.class);
         logger.info("resourceAsString after update: " + resourceAsString);
