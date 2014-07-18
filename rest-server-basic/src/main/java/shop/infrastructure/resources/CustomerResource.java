@@ -22,8 +22,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -106,6 +108,22 @@ public class CustomerResource {
                 writer.println("</customers>");
             }
         };
+    }
+
+    @GET
+    @Path("uriinfo")
+    @Produces("application/xml")
+    public StreamingOutput getCustomers(@Context UriInfo uriInfo) {
+
+        int start = 0;
+        int size = 2;
+        if (uriInfo.getQueryParameters().containsKey("start")) {
+            start = Integer.valueOf(uriInfo.getQueryParameters().getFirst("start"));
+        }
+        if (uriInfo.getQueryParameters().containsKey("size")) {
+            size = Integer.valueOf(uriInfo.getQueryParameters().getFirst("size"));
+        }
+        return getCustomers(start, size);
     }
 
     @GET

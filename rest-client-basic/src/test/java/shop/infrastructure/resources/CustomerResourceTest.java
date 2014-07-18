@@ -107,8 +107,24 @@ public class CustomerResourceTest {
         Response response = client.target(CUSTOMERS_BASE_RESOURCE + "?start=0&size=3").request().get();
         logger.info("customers: " + response.readEntity(String.class));
         assertEquals(200, response.getStatus());
-        
-        response = client.target(CUSTOMERS_BASE_RESOURCE + "?start=0").request().get();
+
+        response = client.target(CUSTOMERS_BASE_RESOURCE)
+                .queryParam("start", "1")
+                .request()
+                .get();
+        logger.info("customers: " + response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void shouldGetCustomersWithPagingWithUriInfoInjected() {
+        Client client = ClientBuilder.newClient();
+
+        Response response = client.target(CUSTOMERS_BASE_RESOURCE + "/uriinfo")
+                .queryParam("start", "0")
+                .queryParam("size", "5")
+                .request()
+                .get();
         logger.info("customers: " + response.readEntity(String.class));
         assertEquals(200, response.getStatus());
     }
