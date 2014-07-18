@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.ietf.annotations.PATCH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -91,6 +92,50 @@ public class CustomerResource {
         currentCustomer.setState(customerToUpdate.getState());
         currentCustomer.setZip(customerToUpdate.getZip());
         currentCustomer.setCountry(customerToUpdate.getCountry());
+
+        logger.info("Customer after updated: " + ReflectionToStringBuilder.toString(currentCustomer));
+    }
+
+    @PATCH
+    @Path("{id}")
+    @Consumes("application/xml")
+    public void updatePartialCustomer(@PathParam("id") int id, InputStream is) {
+        final Customer customerToUpdate = readCustomer(is);
+        final Customer currentCustomer = customerDb.get(id);
+
+        if (currentCustomer == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+
+        logger.info("Customer before updated: " + ReflectionToStringBuilder.toString(currentCustomer));
+
+        if (customerToUpdate.getFirstName() != null) {
+            currentCustomer.setFirstName(customerToUpdate.getFirstName());
+        }
+
+        if (customerToUpdate.getLastName() != null) {
+            currentCustomer.setLastName(customerToUpdate.getLastName());
+        }
+
+        if (customerToUpdate.getStreet() != null) {
+            currentCustomer.setStreet(customerToUpdate.getStreet());
+        }
+
+        if (customerToUpdate.getCity() != null) {
+            currentCustomer.setCity(customerToUpdate.getCity());
+        }
+
+        if (customerToUpdate.getState() != null) {
+            currentCustomer.setState(customerToUpdate.getState());
+        }
+
+        if (customerToUpdate.getZip() != null) {
+            currentCustomer.setZip(customerToUpdate.getZip());
+        }
+
+        if (customerToUpdate.getCountry() != null) {
+            currentCustomer.setCountry(customerToUpdate.getCountry());
+        }
 
         logger.info("Customer after updated: " + ReflectionToStringBuilder.toString(currentCustomer));
     }
