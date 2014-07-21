@@ -30,6 +30,12 @@ public class CustomerResourceAsHtmlTest {
         logger.info("responseAsString: " + response.readEntity(String.class));
         logger.info("Location: " + response.getHeaderString("Location"));
         assertEquals(201, response.getStatus());
+
+        response = client.target(response.getHeaderString("Location"))
+                .request()
+                .get();
+        logger.info("responseAsString: \r\n" + response.readEntity(String.class));
+        assertEquals(200, response.getStatus());
     }
 
 }
